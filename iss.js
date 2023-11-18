@@ -39,14 +39,26 @@ const fetchCoordsByIP = function(ip, callback) {
 
     const latitude = JSON.parse(body).latitude;
     const longitude = JSON.parse(body).longitude;
-    const coordinates = `${latitude}, ${longitude}`;
+    const coordinates = {longitude: longitude, latitude: latitude};
 
     callback(null, coordinates);
-    
 
   });
 };
 
+const fetchISSFlyOverTimes = function (coords, callback) {
+  request(`https://iss-flyover.herokuapp.com/json/?lat=${coords.lat}&lon=${coords.long}`, (error, response, body) => {
+    
+    if (error) {
+      callback(error, null);
+      return;
+    }
+  
+    const responseArray = JSON.parse(body).response; // place array of risetimes/duration in variable
+    // console.log("jsonObject:", responseArray);
 
+    callback(null, responseArray);
+  });
+};
 
-module.exports = { fetchMyIP, fetchCoordsByIP };
+module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes };
